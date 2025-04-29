@@ -65,7 +65,45 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const commentsList = document.querySelector('.comments');
+    const nameInput = document.querySelector('.add-form-name');
+    const commentInput = document.querySelector('.add-form-text');
+    const addButton = document.querySelector('.add-form-button');
+
+    addButton.addEventListener('click', () => {
+      const name = nameInput.value;
+      const comment = commentInput.value;
+      const date = new Date().toLocaleString();
+
+      if (name && comment) {
+        const newComment = `
+          <li class="comment">
+            <div class="comment-header">
+              <div>${name}</div>
+              <div>${date}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${comment}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">0</span>
+                <button class="like-button"></button>
+              </div>
+            </div>
+          </li>
+        `;
+
+        commentsList.innerHTML += newComment;
+
+        // Очистка полей ввода
+        nameInput.value = '';
+        commentInput.value = '';
+      } else {
+        alert('Пожалуйста, заполните все поля.');
+      }
+    });
   </script>
 </html>
