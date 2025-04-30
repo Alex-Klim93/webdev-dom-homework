@@ -6,4 +6,4 @@ https://htmlpreview.github.io/?https://github.com/Alex-Klim93/webdev-dom-homewor
 
 ## Как разрабатывать
 
-Открой index.html в браузере
+Открой index.html в браузере.
