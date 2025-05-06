@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
+        <li class="comment" data-likes="3" data-active="false">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -26,7 +26,7 @@
             </div>
           </div>
         </li>
-        <li class="comment">
+        <li class="comment" data-likes="75" data-active="true">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
@@ -70,6 +70,33 @@
     const commentInput = document.querySelector('.add-form-text');
     const addButton = document.querySelector('.add-form-button');
 
+    const updateLikes = (comment) => {
+      const likesCounter = comment.querySelector('.likes-counter');
+      const likeButton = comment.querySelector('.like-button');
+      const isActive = comment.dataset.active === 'true';
+      let likes = parseInt(comment.dataset.likes);
+
+      if (isActive) {
+        likes--;
+        comment.dataset.active = 'false';
+        likeButton.classList.remove('-active-like');
+      } else {
+        likes++;
+        comment.dataset.active = 'true';
+        likeButton.classList.add('-active-like');
+      }
+
+      likesCounter.textContent = likes;
+      comment.dataset.likes = likes;
+    };
+
+    commentsList.addEventListener('click', (event) => {
+      if (event.target.classList.contains('like-button')) {
+        const comment = event.target.closest('.comment');
+        updateLikes(comment);
+      }
+    });
+
     addButton.addEventListener('click', () => {
       const name = nameInput.value;
       const comment = commentInput.value;
@@ -80,7 +107,7 @@
       }
 
       const newComment = 
-        `<li class="comment">
+        `<li class="comment" data-likes="0" data-active="false">
           <div class="comment-header">
             <div>${name}</div>
             <div>${date}</div>
