@@ -4,6 +4,6 @@ https://htmlpreview.github.io/?https://github.com/Alex-Klim93/webdev-dom-homewor
 
 Верстка для учебного проекта студентов Skypro.
 
-## Как разрабатывать
+## Как разрабатывать.
 
 Открой index.html в браузере.
