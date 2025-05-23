@@ -9,7 +9,8 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment" data-likes="3" data-active="false">
+        <!-- 
+        <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -26,14 +27,14 @@
             </div>
           </div>
         </li>
-        <li class="comment" data-likes="75" data-active="true">
+        <li class="comment">
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
+              Мне нравится как оформлена эта страница! ❤️
             </div>
           </div>
           <div class="comment-footer">
@@ -43,21 +44,22 @@
             </div>
           </div>
         </li>
+        -->
       </ul>
-      <div class="add-form">
+      <div class="add-form" data-indexLi="${index}">
         <input
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
-        />
+        data-indexLi="${index}"/>
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
-        ></textarea>
+        data-indexLi="${index}"></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" data-indexLi="${index}">Написать</button>
         </div>
       </div>
     </div>
@@ -66,70 +68,200 @@
   <script>
     "use strict";
     const commentsList = document.querySelector('.comments');
-    const nameInput = document.querySelector('.add-form-name');
-    const commentInput = document.querySelector('.add-form-text');
-    const addButton = document.querySelector('.add-form-button');
+const nameInput = document.querySelector('.add-form-name');
+const commentInput = document.querySelector('.add-form-text');
+const addButton = document.querySelector('.add-form-button');
 
-    const updateLikes = (comment) => {
-      const likesCounter = comment.querySelector('.likes-counter');
-      const likeButton = comment.querySelector('.like-button');
-      const isActive = comment.dataset.active === 'true';
-      let likes = parseInt(comment.dataset.likes);
+const comments = [
+    {
+        author: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        likes: 3,
+        liked: false
+    },
+    {
+        author: "Варвара Н.",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤️",
+        likes: 75,
+        liked: true
+    }
+];
 
-      if (isActive) {
-        likes--;
-        comment.dataset.active = 'false';
-        likeButton.classList.remove('-active-like');
-      } else {
-        likes++;
-        comment.dataset.active = 'true';
-        likeButton.classList.add('-active-like');
-      }
+function renderComments() {
+    if (!Array.isArray(comments)) {
+        console.error('comments не является массивом');
+        return;
+    }
+    
+    commentsList.innerHTML = ''; // Очищаем список перед отрисовкой
+    comments.forEach((comment, index) => {
+        const commentBlock = `
+            <li class="comment" data-indexLi="${index}">
+                <div class="comment-header" data-indexLi="${index}">
+                    <div>${comment.author}</div>
+                    <div>${comment.date}</div>
+                </div>
+                <div class="comment-body" data-indexLi="${index}">
+                    <div class="comment-text" data-indexLi="${index}">
+                        ${comment.text}
+                    </div>
+                </div>
+                <div class="comment-footer" data-indexLi="${index}">
+                    <div class="likes" data-indexLi="${index}">
+                        <span class="likes-counter">${comment.likes}</span>
+                        <button class="like-button ${comment.liked ? '-active-like' : ''}" data-index="${index}"></button>
+                    </div>
+                </div>
+            </li>`;
+        
+        commentsList.innerHTML += commentBlock;
+    });
 
-      likesCounter.textContent = likes;
-      comment.dataset.likes = likes;
-    };
+    // Добавляем обработчики событий
+    const commentsElements = commentsList.querySelectorAll('.comment');
+    commentsElements.forEach(commentElement => {
+        commentElement.addEventListener('click', (event) => {
+            const indexLi = commentElement.getAttribute('data-indexLi');
+            // Проверяем, был ли клик на кнопке лайка
+            if (!event.target.classList.contains('like-button')) {
+                console.log(`indexLi: ${indexLi}`);
+                
+                //------мое поле
+                
+    //handleClick(event);
+                
+                //------мое поле
+                
+            }
+        });
+    });
 
-    commentsList.addEventListener('click', (event) => {
-      if (event.target.classList.contains('like-button')) {
-        const comment = event.target.closest('.comment');
-        updateLikes(comment);
-      }
-    });
+    const likeButtons = document.querySelectorAll('.like-button');
+    likeButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            const index = event.target.dataset.index; // Получаем индекс комментария
+            console.log(`index: ${index}`);
 
-    addButton.addEventListener('click', () => {
-      const name = nameInput.value;
-      const comment = commentInput.value;
-      const date = new Date().toLocaleString();
+            // Вызываем функцию для переключения лайка
+            toggleLike(event);
+        });
+    });
+}
 
-      if (!name || !comment) {
-        return alert('Пожалуйста, заполните все поля.');
-      }
 
-      const newComment = 
-        `<li class="comment" data-likes="0" data-active="false">
-          <div class="comment-header">
-            <div>${name}</div>
-            <div>${date}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${comment}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
+//--------------
 
-      commentsList.innerHTML += newComment;
+function toggleLike(event) {
+    const index = event.target.dataset.index; // Получаем индекс комментария
+    const comment = comments[index];
 
-      // Очистка полей ввода
-      nameInput.value = '';
-      commentInput.value = '';
-    });
+    // Переключаем состояние лайка
+    comment.liked = !comment.liked;
+
+    // Изменяем количество лайков
+    comment.likes += comment.liked ? 1 : -1;
+
+    // Перерисовываем комментарии
+    renderComments();
+}
+
+
+
+
+//------мое поле
+
+let selectedCommentIndex = null; // Переменная для хранения индекса выбранного комментария
+let lastNameValue = ''; // Переменная для хранения последнего значения имени
+let lastCommentValue = ''; // Переменная для хранения последнего значения комментария
+
+function handleClick(event) {
+    const target = event.target;
+
+    // Проверяем, является ли кликнутый элемент частью комментариев
+    const indexLi = Array.from(document.querySelectorAll('.comment')).indexOf(target.closest('.comment'));
+
+    // Проверяем, является ли кликнутый элемент частью формы добавления
+    const isInAddForm = target.closest('.add-form');
+
+    if (indexLi >= 0 && indexLi < comments.length) {
+        // Сохраняем значения в переменные перед очисткой
+        lastNameValue = nameInput.value;
+        lastCommentValue = commentInput.value;
+
+        selectedCommentIndex = indexLi; // Сохраняем индекс выбранного комментария
+        const comment = comments[indexLi];
+
+        console.log('Автор:', comment.author);
+        console.log('Текст:', comment.text);
+        console.log('Дата:', comment.date);
+        console.log('Лайки:', comment.likes);
+        console.log('Лайкнуто:', comment.liked);
+
+        nameInput.value = comment.author;
+        commentInput.value = ">>> " + comment.text;
+    } else if (!isInAddForm) {
+        console.log('Выбран элемент не с нашим индексом и не внутри формы добавления');
+        // Восстанавливаем предыдущие значения полей ввода
+        nameInput.value = lastNameValue;
+        commentInput.value = lastCommentValue;
+        selectedCommentIndex = null; // Сбрасываем индекс, если выбран некорректный элемент
+    }
+}
+
+// Добавляем слушатель события на весь документ
+document.addEventListener('click', handleClick);
+
+//------мое поле
+
+
+
+
+addButton.addEventListener('click', () => {
+    const name = nameInput.value;
+    const comment = commentInput.value;
+    const date = new Date().toLocaleString();
+
+    if (!name || !comment) {
+        return alert('Пожалуйста, заполните все поля.');
+    }
+
+    const newComment = {
+        author: name,
+        date: date,
+        text: comment,
+        likes: 0,
+        liked: false
+    };
+
+    if (selectedCommentIndex !== null) {
+        // Добавляем новый комментарий строго под выбранным комментарием
+        comments.splice(selectedCommentIndex + 1, 0, newComment);
+        
+        //----мое поле 
+        
+        //----мое поле 
+        
+    } else {
+        // Если нет выбранного комментария, добавляем в основной массив
+        comments.push(newComment);
+    }
+
+    renderComments();
+
+    // Очистка полей ввода
+    nameInput.value = '';
+    commentInput.value = '';
+});
+
+
+
+// Первоначальная отрисовка комментариев
+renderComments();
+
+
+
+
   </script>
 </html>
