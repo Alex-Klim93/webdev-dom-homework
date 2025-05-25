@@ -46,30 +46,31 @@
         </li>
         -->
       </ul>
-      <div class="add-form">
+      <div class="add-form" data-indexLi="${index}">
         <input
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
-        />
+        data-indexLi="${index}"/>
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
-        ></textarea>
+        data-indexLi="${index}"></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" data-indexLi="${index}">Написать</button>
         </div>
       </div>
     </div>
+  </body>
 
-<script>
+  <script>
     "use strict";
-    const commentsList = document.querySelector('.comments');
-    const nameInput = document.querySelector('.add-form-name');
-    const commentInput = document.querySelector('.add-form-text');
-    const addButton = document.querySelector('.add-form-button');
+const commentsList = document.querySelector('.comments');
+const nameInput = document.querySelector('.add-form-name');
+const commentInput = document.querySelector('.add-form-text');
+const addButton = document.querySelector('.add-form-button');
 
 const comments = [
     {
@@ -89,39 +90,55 @@ const comments = [
 ];
 
 function renderComments() {
-    if (!Array.isArray(comments)) {
-        console.error('comments не является массивом');
-        return;
-    }
     commentsList.innerHTML = ''; // Очищаем список перед отрисовкой
     comments.forEach((comment, index) => {
         const commentBlock = 
-            `<li class="comment">
-                <div class="comment-header">
+            `<li class="comment" data-indexLi="${index}">
+                <div class="comment-header" data-indexLi="${index}">
                     <div>${comment.author}</div>
                     <div>${comment.date}</div>
                 </div>
-                <div class="comment-body">
-                    <div class="comment-text">
+                <div class="comment-body" data-indexLi="${index}">
+                    <div class="comment-text" data-indexLi="${index}">
                         ${comment.text}
                     </div>
                 </div>
-                <div class="comment-footer">
-                    <div class="likes">
+                <div class="comment-footer" data-indexLi="${index}">
+                    <div class="likes" data-indexLi="${index}">
                         <span class="likes-counter">${comment.likes}</span>
                         <button class="like-button ${comment.liked ? '-active-like' : ''}" data-index="${index}"></button>
                     </div>
                 </div>
             </li>`;
+        
         commentsList.innerHTML += commentBlock;
     });
-    
-    // Добавляем обработчики событий на кнопки лайков
+
+    // Добавляем обработчики событий
+    const commentsElements = commentsList.querySelectorAll('.comment');
+    commentsElements.forEach(commentElement => {
+        commentElement.addEventListener('click', (event) => {
+            const indexLi = commentElement.getAttribute('data-indexLi');
+            const comment = comments[indexLi];
+            //nameInput.value = ;  // Заполняем поле имени автора
+            commentInput.value = '>>> '+ comment.author + '\n' + comment.text;  // Заполняем поле текста комментария
+        });
+    });
+
     const likeButtons = document.querySelectorAll('.like-button');
     likeButtons.forEach(button => {
-        button.addEventListener('click', toggleLike);
+        button.addEventListener('click', (event) => {
+            event.stopPropagation(); // Останавливаем всплытие события
+            const index = event.target.dataset.index; // Получаем индекс комментария
+            console.log(`index: ${index}`);
+
+            // Вызываем функцию для переключения лайка
+            toggleLike(event);
+        });
     });
 }
+
+//--------------
 
 function toggleLike(event) {
     const index = event.target.dataset.index; // Получаем индекс комментария
@@ -137,38 +154,34 @@ function toggleLike(event) {
     renderComments();
 }
 
+//---------------------
+
+addButton.addEventListener('click', () => {
+    const name = nameInput.value;
+    const comment = commentInput.value;
+    const date = new Date().toLocaleString();
+
+    if (!name || !comment) {
+        return alert('Пожалуйста, заполните все поля.');
+    }
+    const newComment = {
+        author: name,
+        date: date,
+        text: comment,
+        likes: 0,
+        liked: false
+    };
+
+    comments.push(newComment);
+    
+    renderComments();
+
+    // Очистка полей ввода
+    nameInput.value = '';
+    commentInput.value = '';
+});
+
 // Первоначальная отрисовка комментариев
 renderComments();
-
-    addButton.addEventListener('click', () => {
-        const name = nameInput.value;
-        const comment = commentInput.value;
-        const date = new Date().toLocaleString();
-
-        if (!name || !comment) {
-            return alert('Пожалуйста, заполните все поля.');
-
-        }
-
-        const newComment = {
-            author: name,
-            date: date,
-            text: comment,
-            likes: 0,
-            liked: false
-        };
-
-        comments.push(newComment);
-        renderComments();
-
-        // Очистка полей ввода
-        nameInput.value = '';
-        commentInput.value = '';
-    });
-
-    // Первоначальная отрисовка комментариев
-    renderComments();
   </script>
-  </body>
-
 </html>
