@@ -114,14 +114,13 @@ function renderComments() {
         commentsList.innerHTML += commentBlock;
     });
 
-    // Добавляем обработчики событий
     const commentsElements = commentsList.querySelectorAll('.comment');
     commentsElements.forEach(commentElement => {
         commentElement.addEventListener('click', (event) => {
             const indexLi = commentElement.getAttribute('data-indexLi');
             const comment = comments[indexLi];
-            //nameInput.value = ;  // Заполняем поле имени автора
-            commentInput.value = '>>> '+ comment.author + '\n' + comment.text;  // Заполняем поле текста комментария
+            //nameInput.value = comment.author;  // Заполняем поле имени автора
+            commentInput.value = '>>> '+comment.author+'\n'+comment.text;  // Заполняем поле текста комментария
         });
     });
 
@@ -130,15 +129,10 @@ function renderComments() {
         button.addEventListener('click', (event) => {
             event.stopPropagation(); // Останавливаем всплытие события
             const index = event.target.dataset.index; // Получаем индекс комментария
-            console.log(`index: ${index}`);
-
-            // Вызываем функцию для переключения лайка
             toggleLike(event);
         });
     });
 }
-
-//--------------
 
 function toggleLike(event) {
     const index = event.target.dataset.index; // Получаем индекс комментария
@@ -154,20 +148,15 @@ function toggleLike(event) {
     renderComments();
 }
 
-//---------------------
-
 addButton.addEventListener('click', () => {
     const name = nameInput.value;
     const comment = commentInput.value;
     const date = new Date().toLocaleString();
 
-    if (!name || !comment) {
-        return alert('Пожалуйста, заполните все поля.');
-    }
     const newComment = {
         author: name,
         date: date,
-        text: comment,
+        text: comment, // Сохраняем текст комментария как есть
         likes: 0,
         liked: false
     };
