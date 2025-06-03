@@ -1,99 +1,67 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+  <head>
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <!-- 
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤️
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-        -->
-      </ul>
-      <div class="add-form" data-indexLi="${index}">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        data-indexLi="${index}"/>
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        data-indexLi="${index}"></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" data-indexLi="${index}">Написать</button>
-        </div>
-      </div>
-    </div>
-  </body>
+  <body>
+    <div class="container">
+      <ul class="comments"></ul>
 
-  <script>
-    "use strict";
-const commentsList = document.querySelector('.comments');
-const nameInput = document.querySelector('.add-form-name');
-const commentInput = document.querySelector('.add-form-text');
-const addButton = document.querySelector('.add-form-button');
+      <div class="add-form" data-indexLi="${index}">
+        <input
+          type="text"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+          data-indexLi="${index}"
+        />
+        <textarea
+          type="textarea"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+          data-indexLi="${index}"
+        ></textarea>
+        <div class="add-form-row">
+          <button class="add-form-button" data-indexLi="${index}">
+            Написать
+          </button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./index.js"></script>
+  </body>
 
-const comments = [
-    {
+  <!-- <script>
+    "use strict";
+    const commentsList = document.querySelector(".comments");
+    const nameInput = document.querySelector(".add-form-name");
+    const commentInput = document.querySelector(".add-form-text");
+    const addButton = document.querySelector(".add-form-button");
+
+    const comments = [
+      {
         author: "Глеб Фокин",
         date: "12.02.22 12:18",
         text: "Это будет первый комментарий на этой странице",
         likes: 3,
-        liked: false
-    },
-    {
+        liked: false,
+      },
+      {
         author: "Варвара Н.",
         date: "13.02.22 19:22",
         text: "Мне нравится как оформлена эта страница! ❤️",
         likes: 75,
-        liked: true
-    }
-];
+        liked: true,
+      },
+    ];
 
-function renderComments() {
-    commentsList.innerHTML = ''; // Очищаем список перед отрисовкой
-    comments.forEach((comment, index) => {
-        const commentBlock = 
-            `<li class="comment" data-indexLi="${index}">
+    function renderComments() {
+      commentsList.innerHTML = ""; // Очищаем список перед отрисовкой
+      comments.forEach((comment, index) => {
+        const commentBlock = `<li class="comment" data-indexLi="${index}">
                 <div class="comment-header" data-indexLi="${index}">
                     <div>${comment.author}</div>
                     <div>${comment.date}</div>
@@ -106,71 +74,81 @@ function renderComments() {
                 <div class="comment-footer" data-indexLi="${index}">
                     <div class="likes" data-indexLi="${index}">
                         <span class="likes-counter">${comment.likes}</span>
-                        <button class="like-button ${comment.liked ? '-active-like' : ''}" data-index="${index}"></button>
+                        <button class="like-button ${
+                          comment.liked ? "-active-like" : ""
+                        }" data-index="${index}"></button>
                     </div>
                 </div>
             </li>`;
-        
+
         commentsList.innerHTML += commentBlock;
-    });
+      });
 
-    const commentsElements = commentsList.querySelectorAll('.comment');
-    commentsElements.forEach(commentElement => {
-        commentElement.addEventListener('click', (event) => {
-            const indexLi = commentElement.getAttribute('data-indexLi');
-            const comment = comments[indexLi];
-            //nameInput.value = comment.author;  // Заполняем поле имени автора
-            commentInput.value = '>>> '+comment.author+'\n'+comment.text;  // Заполняем поле текста комментария
+      const commentsElements = commentsList.querySelectorAll(".comment");
+      commentsElements.forEach((commentElement) => {
+        commentElement.addEventListener("click", (event) => {
+          const indexLi = commentElement.getAttribute("data-indexLi");
+          const comment = comments[indexLi];
+          //nameInput.value = comment.author;  // Заполняем поле имени автора
+          commentInput.value = ">>> " + comment.author + "\n" + comment.text; // Заполняем поле текста комментария
         });
-    });
+      });
 
-    const likeButtons = document.querySelectorAll('.like-button');
-    likeButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
-            event.stopPropagation(); // Останавливаем всплытие события
-            const index = event.target.dataset.index; // Получаем индекс комментария
-            toggleLike(event);
+      const likeButtons = document.querySelectorAll(".like-button");
+      likeButtons.forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation(); // Останавливаем всплытие события
+          const index = event.target.dataset.index; // Получаем индекс комментария
+          toggleLike(event);
         });
-    });
-}
+      });
+    }
 
-function toggleLike(event) {
-    const index = event.target.dataset.index; // Получаем индекс комментария
-    const comment = comments[index];
+    function toggleLike(event) {
+      const index = event.target.dataset.index; // Получаем индекс комментария
+      const comment = comments[index];
 
-    // Переключаем состояние лайка
-    comment.liked = !comment.liked;
+      // Переключаем состояние лайка
+      comment.liked = !comment.liked;
 
-    // Изменяем количество лайков
-    comment.likes += comment.liked ? 1 : -1;
+      // Изменяем количество лайков
+      comment.likes += comment.liked ? 1 : -1;
 
-    // Перерисовываем комментарии
-    renderComments();
-}
+      // Перерисовываем комментарии
+      renderComments();
+    }
 
-addButton.addEventListener('click', () => {
-    const name = nameInput.value;
-    const comment = commentInput.value;
-    const date = new Date().toLocaleString();
+    addButton.addEventListener("click", () => {
+      const name = nameInput.value;
+      const comment = commentInput.value;
+      const date = new Date().toLocaleString();
 
-    const newComment = {
+      const newComment = {
         author: name,
         date: date,
         text: comment, // Сохраняем текст комментария как есть
         likes: 0,
-        liked: false
-    };
+        liked: false,
+      };
 
-    comments.push(newComment);
-    
+      comments.push(newComment);
+
+      renderComments();
+
+      // Очистка полей ввода
+      nameInput.value = "";
+      commentInput.value = "";
+    });
+
+    // Первоначальная отрисовка комментариев
     renderComments();
-
-    // Очистка полей ввода
-    nameInput.value = '';
-    commentInput.value = '';
-});
-
-// Первоначальная отрисовка комментариев
-renderComments();
-  </script>
+  </script> 
+  
+    function sanitizeInput(input) {
+        const div = document.createElement('div');
+        div.innerText = input;
+        return div.innerHTML;
+    }
+  
+  -->
 </html>
