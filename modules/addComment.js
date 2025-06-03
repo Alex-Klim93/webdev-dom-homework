@@ -5,8 +5,8 @@ import {sanitizeInput} from "./sanitizeInput.js"
 const nameInput = document.querySelector(".add-form-name");
 const commentInput = document.querySelector(".add-form-text");
 export function addComment() {
-    let name = sanitizeInput(nameInput.value);
-    let comment = sanitizeInput(commentInput.value);
+    let name = sanitizeInput(nameInput.value.trim());
+    let comment = sanitizeInput(commentInput.value.trim());
     const date = new Date().toLocaleString();
 
     // Проверка на пустые поля
@@ -32,3 +32,8 @@ export function addComment() {
     console.log("Имя:", name);
     console.log("Комментарий:", comment);
 }
+
+const addButton = document.querySelector(".add-form-button");
+
+
+addButton.addEventListener("click", addComment);
