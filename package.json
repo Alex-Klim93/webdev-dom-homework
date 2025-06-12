@@ -1,0 +1,15 @@
+{
+  "name": "comments",
+  "version": "1.0.0",
+  "description": "https://htmlpreview.github.io/?https://github.com/Alex-Klim93/webdev-dom-homework/blob/Alex-Klim93-patch-8/index.html",
+  "main": "index.js",
+  "dependencies": {
+    "prettier": "^3.5.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
