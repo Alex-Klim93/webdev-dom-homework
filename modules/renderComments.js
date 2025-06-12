@@ -10,7 +10,7 @@ export function renderComments() {
   comments.forEach((comment, index) => {
     const commentBlock = `<li class="comment" data-indexLi="${index}">
                 <div class="comment-header" data-indexLi="${index}">
-                    <div>${comment.author}</div>
+                    <div>${comment.author.name}</div>
                     <div>${comment.date}</div>
                 </div>
                 <div class="comment-body" data-indexLi="${index}">
@@ -22,7 +22,7 @@ export function renderComments() {
                     <div class="likes" data-indexLi="${index}">
                         <span class="likes-counter">${comment.likes}</span>
                         <button class="like-button ${
-                          comment.liked ? "-active-like" : ""
+                          comment.isLiked ? "-active-like" : ""
                         }" data-index="${index}"></button>
                     </div>
                 </div>
@@ -36,8 +36,8 @@ export function renderComments() {
     commentElement.addEventListener("click", (event) => {
       const indexLi = commentElement.getAttribute("data-indexLi");
       const comment = comments[indexLi];
-      //nameInput.value = comment.author;  // Заполняем поле имени автора
-      commentInput.value = ">>> " + comment.author + "\n" + comment.text; // Заполняем поле текста комментария
+      //nameInput.value = comment.author.name;  // Заполняем поле имени автора
+      commentInput.value = ">>> " + comment.author.name + "\n" + comment.text; // Заполняем поле текста комментария
     });
   });
 
@@ -45,7 +45,7 @@ export function renderComments() {
   likeButtons.forEach((button) => {
     button.addEventListener("click", (event) => {
       event.stopPropagation(); // Останавливаем всплытие события
-      const index = event.target.dataset.index; // Получаем индекс комментария
+      const indexLi = event.target.dataset.index; // Получаем индекс комментария
       toggleLike(event);
     });
   });

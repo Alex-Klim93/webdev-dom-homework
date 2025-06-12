@@ -17,14 +17,14 @@ export function addComment() {
     return;
   }
   const newComment = {
-    author: name,
+    //id: {data:index},
     date: date,
-    text: comment,
     likes: 0,
-    liked: false,
-  };
+    isLiked: false,
+    text: String(comment),
+    author: {name:String(name)},
+  }
 
-  comments.push(newComment);
   renderComments();
 
   // Очистка полей ввода
@@ -32,6 +32,21 @@ export function addComment() {
   commentInput.value = "";
   console.log("Имя:", name);
   console.log("Комментарий:", comment);
+  console.log("Комментарий:", newComment);
+
+  comments.push(newComment);
+  fetch("https://wedev-api.sky.pro/api/v1/Alex-Klim93/comments", {
+    method: "POST",
+    body: JSON.stringify(comments),
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data);
+      updateTasks(data.String(comments));
+      renderComments();
+    });
 }
 
 const addButton = document.querySelector(".add-form-button");
