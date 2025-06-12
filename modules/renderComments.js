@@ -1,10 +1,9 @@
-import {comments} from "./comments.js";
-import {toggleLike} from "./toggleLike.js";
+import { comments } from "./comments.js";
+import { toggleLike } from "./toggleLike.js";
 
 const commentsList = document.querySelector(".comments");
 const nameInput = document.querySelector(".add-form-name");
 const commentInput = document.querySelector(".add-form-text");
-
 
 export function renderComments() {
   commentsList.innerHTML = ""; // Очищаем список перед отрисовкой
@@ -52,7 +51,4 @@ export function renderComments() {
   });
 }
 
-
-
-
-    
+renderComments();
