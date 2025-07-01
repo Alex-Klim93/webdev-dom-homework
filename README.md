@@ -1,6 +1,6 @@
 # Проект "Комментарии"
 
-https://htmlpreview.github.io/?https://github.com/Alex-Klim93/webdev-dom-homework/blob/Alex-Klim93-patch-8/index.html
+https://alex-klim93.github.io/webdev-dom-homework/
 
 Верстка для учебного проекта студентов Skypro.
 
