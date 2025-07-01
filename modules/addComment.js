@@ -1,71 +1,80 @@
-import { renderComments } from './renderComments.js'
-import { sanitizeInput } from './sanitizeInput.js'
-import { fetchComments } from './fetchComments.js'
-import { comments, updateTasks } from './comments.js'
+import { renderComments } from "./renderComments.js";
+import { sanitizeInput } from "./sanitizeInput.js";
+import { fetchComments } from "./fetchComments.js";
+import { comments, updateTasks } from "./comments.js";
 
-const nameInput = document.querySelector('.add-form-name')
-const commentInput = document.querySelector('.add-form-text')
+const nameInput = document.querySelector(".add-form-name");
+const commentInput = document.querySelector(".add-form-text");
+const addForm = document.querySelector(".add-form"); // Получаем форму
 
 export function addComment() {
-    const addButton = document.querySelector('.add-form-button')
+  const addButton = document.querySelector(".add-form-button");
 
-    addButton.addEventListener('click', () => {
-        let name = sanitizeInput(nameInput.value.trim())
-        let comment = sanitizeInput(commentInput.value.trim())
+  addButton.addEventListener("click", () => {
+    let name = sanitizeInput(nameInput.value.trim());
+    let comment = sanitizeInput(commentInput.value.trim());
 
-        // Проверка на пустые поля
-        if (!name || !comment) {
-            alert('Пожалуйста, заполните все поля.')
-            nameInput.value = ''
-            commentInput.value = ''
-            return
-        }
+    // Проверка на пустые поля
+    if (!name || !comment) {
+      alert("Пожалуйста, заполните все поля.");
+      nameInput.value = "";
+      commentInput.value = "";
+      return;
+    }
 
-        const newComment = {
-            name: name,
-            text: comment,
-        }
+    const newComment = {
+      name: name,
+      text: comment,
+    };
 
-        // Сохраняем текущие комментарии
-        const originalComments = [...comments]
+    // Сохраняем текущие комментарии
+    const originalComments = [...comments];
 
-        // Создаем минималистичное сообщение о загрузке
-        const loadingMessage = {
-            author: { name: '' }, // Пустое имя
-            text: 'Пожалуйста подождите, идет загрузка...',
-            date: '',
-            likes: 0,
-            isLiked: false,
-            isPlainText: true, // Флаг для простого текста
-        }
+    // Скрываем форму и показываем сообщение о загрузке
+    addForm.style.display = "none";
+    const loadingDiv = document.createElement("div");
+    loadingDiv.className = "loading-message";
+    loadingDiv.textContent = "Пожалуйста подождите, идет загрузка...";
+    addForm.parentNode.insertBefore(loadingDiv, addForm.nextSibling);
 
-        // Заменяем на сообщение о загрузке
-        updateTasks([loadingMessage])
-        renderComments()
+    // Очистка полей ввода
+    nameInput.value = "";
+    commentInput.value = "";
 
-        // Очистка полей ввода
-        nameInput.value = ''
-        commentInput.value = ''
+    addButton.textContent = "Загрузка...";
+    addButton.disabled = true;
 
-        addButton.textContent = 'Загрузка...'
-        addButton.disabled = true
-
-        fetch('https://wedev-api.sky.pro/api/v1/Alex-Klim93/comments', {
-            method: 'POST',
-            body: JSON.stringify(newComment),
-        })
-            .then((response) => {
-                return fetchComments()
-            })
-            .catch((error) => {
-                // В случае ошибки возвращаем оригинальные комментарии
-                updateTasks(originalComments)
-                throw error
-            })
-            .finally(() => {
-                addButton.textContent = 'Написать'
-                addButton.disabled = false
-                renderComments()
-            })
+    fetch("https://wedev-api.sky.pro/api/v1/Alex-Klim93/comments", {
+      method: "POST",
+      body: JSON.stringify(newComment),
     })
+      .then(() => {
+        return fetch("https://wedev-api.sky.pro/api/v1/Alex-Klim93/comments");
+      })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Ошибка загрузки комментариев");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        updateTasks(data.comments);
+        renderComments();
+      })
+      .catch((error) => {
+        console.error("Ошибка:", error);
+        updateTasks(originalComments);
+        renderComments();
+      })
+      .finally(() => {
+        // Восстанавливаем форму и убираем сообщение о загрузке
+        addForm.style.display = "block";
+        const loadingMessage = document.querySelector(".loading-message");
+        if (loadingMessage) {
+          loadingMessage.remove();
+        }
+        addButton.disabled = false;
+        addButton.textContent = "Написать";
+      });
+  });
 }
