@@ -1,54 +1,71 @@
-import { renderComments } from "./renderComments.js";
-import { comments } from "./comments.js";
-import { sanitizeInput } from "./sanitizeInput.js";
+import { renderComments } from './renderComments.js'
+import { sanitizeInput } from './sanitizeInput.js'
+import { fetchComments } from './fetchComments.js'
+import { comments, updateTasks } from './comments.js'
 
-const nameInput = document.querySelector(".add-form-name");
-const commentInput = document.querySelector(".add-form-text");
+const nameInput = document.querySelector('.add-form-name')
+const commentInput = document.querySelector('.add-form-text')
+
 export function addComment() {
-  let name = sanitizeInput(nameInput.value.trim());
-  let comment = sanitizeInput(commentInput.value.trim());
-  const date = new Date().toLocaleString();
+    const addButton = document.querySelector('.add-form-button')
 
-  // Проверка на пустые поля
-  if (!name || !comment) {
-    alert("Пожалуйста, заполните все поля.");
-    nameInput.value = "";
-    commentInput.value = "";
-    return;
-  }
-  const newComment = {
-    //id: {data:index},
-    date: date,
-    likes: 0,
-    isLiked: false,
-    text: String(comment),
-    author: {name:String(name)},
-  }
+    addButton.addEventListener('click', () => {
+        let name = sanitizeInput(nameInput.value.trim())
+        let comment = sanitizeInput(commentInput.value.trim())
 
-  renderComments();
+        // Проверка на пустые поля
+        if (!name || !comment) {
+            alert('Пожалуйста, заполните все поля.')
+            nameInput.value = ''
+            commentInput.value = ''
+            return
+        }
 
-  // Очистка полей ввода
-  nameInput.value = "";
-  commentInput.value = "";
-  console.log("Имя:", name);
-  console.log("Комментарий:", comment);
-  console.log("Комментарий:", newComment);
+        const newComment = {
+            name: name,
+            text: comment,
+        }
 
-  comments.push(newComment);
-  fetch("https://wedev-api.sky.pro/api/v1/Alex-Klim93/comments", {
-    method: "POST",
-    body: JSON.stringify(comments),
-  })
-    .then((response) => {
-      return response.json();
+        // Сохраняем текущие комментарии
+        const originalComments = [...comments]
+
+        // Создаем минималистичное сообщение о загрузке
+        const loadingMessage = {
+            author: { name: '' }, // Пустое имя
+            text: 'Пожалуйста подождите, идет загрузка...',
+            date: '',
+            likes: 0,
+            isLiked: false,
+            isPlainText: true, // Флаг для простого текста
+        }
+
+        // Заменяем на сообщение о загрузке
+        updateTasks([loadingMessage])
+        renderComments()
+
+        // Очистка полей ввода
+        nameInput.value = ''
+        commentInput.value = ''
+
+        addButton.textContent = 'Загрузка...'
+        addButton.disabled = true
+
+        fetch('https://wedev-api.sky.pro/api/v1/Alex-Klim93/comments', {
+            method: 'POST',
+            body: JSON.stringify(newComment),
+        })
+            .then((response) => {
+                return fetchComments()
+            })
+            .catch((error) => {
+                // В случае ошибки возвращаем оригинальные комментарии
+                updateTasks(originalComments)
+                throw error
+            })
+            .finally(() => {
+                addButton.textContent = 'Написать'
+                addButton.disabled = false
+                renderComments()
+            })
     })
-    .then((data) => {
-      console.log(data);
-      updateTasks(data.String(comments));
-      renderComments();
-    });
 }
-
-const addButton = document.querySelector(".add-form-button");
-
-addButton.addEventListener("click", addComment);

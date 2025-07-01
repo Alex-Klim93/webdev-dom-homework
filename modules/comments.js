@@ -1,6 +1,9 @@
+export let comments = []
 
-export let comments = [];
-
-export const updateTasks = (newTasks)=>{
-  comments = newTasks
+export const updateTasks = (newTasks) => {
+    comments = newTasks
 }
+
+// export const updateTasks = (newComment)=>{
+//   comments = newComment
+// }
