@@ -2,7 +2,7 @@
 
 https://alex-klim93.github.io/webdev-dom-homework/
 
-Верстка для учебного проекта студентов Skypro.
+Верстка для учебного проекта студентов Skypro
 
 ## Как разрабатывать.
 
