@@ -7,38 +7,75 @@ import {
   saveUserToLocalStorage,
   loginUser,
   registerUser,
+  removeUserFromLocalStorage,
 } from "./modules/auth.js";
+import { exetButton } from "./modules/exetButton.js";
+import { getUsersList } from "./modules/listUser.js";
 
-// Создаем элементы для авторизации
-const loginForm = document.createElement("div");
-loginForm.className = "login-form";
-loginForm.innerHTML = `
-  <h2>Вход</h2>
-  <input type="text" class="login-input" placeholder="Логин">
-  <input type="password" class="password-input" placeholder="Пароль">
-  <button class="login-button">Войти</button>
-  <button class="register-button">Зарегистрироваться</button>
-  <div class="auth-error"></div>
-`;
+// Инициализация приложения
+function initApp() {
+  // Создаем элементы для авторизации
+  const loginForm = document.createElement("div");
+  loginForm.className = "login-form";
+  loginForm.innerHTML = `
+    <h2>Форма входа</h2>
+    <input type="text" class="login-input" placeholder="Логин" value="admin">
+    <input type="password" class="password-input" placeholder="Пароль" value="admin">
+    <button class="login-button">Войти</button>
+    <button class="register-toggle-button">Регистрация</button>
+    <div class="auth-error"></div>
+  `;
 
-const registerForm = document.createElement("div");
-registerForm.className = "register-form";
-registerForm.style.display = "none";
-registerForm.innerHTML = `
-  <h2>Регистрация</h2>
-  <input type="text" class="register-login-input" placeholder="Логин">
-  <input type="text" class="register-name-input" placeholder="Имя">
-  <input type="password" class="register-password-input" placeholder="Пароль">
-  <button class="submit-register-button">Зарегистрироваться</button>
-  <button class="back-to-login-button">Назад к входу</button>
-  <div class="register-error"></div>
-`;
+  const registerForm = document.createElement("div");
+  registerForm.className = "register-form";
+  registerForm.style.display = "none";
+  registerForm.innerHTML = `
+    <h2>Форма регистрации</h2>
+    <input type="text" class="register-login-input" placeholder="Логин">
+    <input type="text" class="register-name-input" placeholder="Имя">
+    <input type="password" class="register-password-input" placeholder="Пароль">
+    <button class="submit-register-button">Зарегистрироваться</button>
+    <button class="back-to-login-button">Назад</button>
+    <div class="register-error"></div>
+  `;
 
-const container = document.querySelector(".container");
-container.prepend(loginForm);
-container.prepend(registerForm);
+  const container = document.querySelector(".container");
+  container.prepend(loginForm);
+  container.prepend(registerForm);
 
-// Функция для отображения сообщения о загрузке
+  // Проверка авторизации при загрузке
+  const user = getUserFromLocalStorage();
+  if (user) {
+    handleSuccessfulAuth();
+  } else {
+    showLoadingMessage();
+  }
+
+  // Обработчики событий
+  document
+    .querySelector(".login-button")
+    .addEventListener("click", handleLogin);
+  document
+    .querySelector(".register-toggle-button")
+    .addEventListener("click", () => {
+      loginForm.style.display = "none";
+      registerForm.style.display = "block";
+    });
+  document
+    .querySelector(".back-to-login-button")
+    .addEventListener("click", () => {
+      registerForm.style.display = "none";
+      loginForm.style.display = "block";
+    });
+  document
+    .querySelector(".submit-register-button")
+    .addEventListener("click", handleRegister);
+
+  // Загрузка комментариев
+  loadComments();
+}
+
+// Функции для работы с UI
 function showLoadingMessage() {
   updateTasks([
     {
@@ -53,7 +90,6 @@ function showLoadingMessage() {
   renderComments();
 }
 
-// Функция для отображения сообщения об ошибке
 function showErrorMessage(message) {
   updateTasks([
     {
@@ -65,35 +101,14 @@ function showErrorMessage(message) {
   renderComments();
 }
 
-// Проверяем, авторизован ли пользователь
-const user = getUserFromLocalStorage();
-if (user) {
-  loginForm.style.display = "none";
-  registerForm.style.display = "none";
+function handleSuccessfulAuth() {
+  document.querySelector(".login-form").style.display = "none";
+  document.querySelector(".register-form").style.display = "none";
+  exetButton();
+  loadComments();
 }
 
-// Показываем сообщение о загрузке
-showLoadingMessage();
-
-// Добавляем обработчики для форм авторизации и регистрации
-document.querySelector(".login-button").addEventListener("click", handleLogin);
-document.querySelector(".register-button").addEventListener("click", () => {
-  loginForm.style.display = "none";
-  registerForm.style.display = "block";
-});
-document
-  .querySelector(".back-to-login-button")
-  .addEventListener("click", () => {
-    registerForm.style.display = "none";
-    loginForm.style.display = "block";
-  });
-document
-  .querySelector(".submit-register-button")
-  .addEventListener("click", handleRegister);
-
-// Загружаем комментарии
-loadComments();
-
+// Основные функции
 async function loadComments() {
   try {
     const comments = await fetchComments();
@@ -110,6 +125,12 @@ async function loadComments() {
         ? "Не удалось загрузить комментарии. Проверьте интернет и попробуйте позже."
         : "Ошибка сервера. Попробуйте позже."
     );
+
+    // Если ошибка 401 (не авторизован), разлогиниваем пользователя
+    if (error.message.includes("401")) {
+      removeUserFromLocalStorage();
+      document.querySelector(".login-form").style.display = "block";
+    }
   }
 }
 
@@ -124,12 +145,10 @@ async function handleLogin() {
   try {
     const user = await loginUser({ login, password });
     saveUserToLocalStorage(user);
-    loginForm.style.display = "none";
-    await loadComments();
-    addComment();
+    handleSuccessfulAuth();
   } catch (error) {
     errorElement.textContent = error.message;
-    showErrorMessage("Ошибка авторизации. Попробуйте снова.");
+    showErrorMessage("Ошибка авторизации. Проверьте логин и пароль.");
   }
 }
 
@@ -145,11 +164,12 @@ async function handleRegister() {
   try {
     const user = await registerUser({ login, name, password });
     saveUserToLocalStorage(user);
-    registerForm.style.display = "none";
-    await loadComments();
-    addComment();
+    handleSuccessfulAuth();
   } catch (error) {
     errorElement.textContent = error.message;
-    showErrorMessage("Ошибка регистрации. Попробуйте снова.");
+    showErrorMessage("Ошибка регистрации: " + error.message);
   }
 }
+
+// Инициализация приложения
+initApp();
