@@ -1,5 +1,6 @@
 import { comments } from "./comments.js";
 import { toggleLike } from "./toggleLike.js";
+import { exetButton } from "./exetButton.js";
 
 const commentsList = document.querySelector(".comments");
 //const nameInput = document.querySelector('.add-form-name')
@@ -60,5 +61,4 @@ export function renderComments() {
     });
   });
 }
-
 renderComments();
