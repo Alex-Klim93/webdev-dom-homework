@@ -28,7 +28,7 @@ export function toggleLike(event) {
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
-    }
+    },
   )
     .then((response) => {
       if (!response.ok) {
