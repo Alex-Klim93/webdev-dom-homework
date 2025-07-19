@@ -1,24 +1,17 @@
 import { renderComments } from "./modules/renderComments.js";
-import { addComment } from "./modules/addComment.js";
-import { sanitizeInput } from "./modules/sanitizeInput.js";
 import { updateTasks } from "./modules/comments.js";
+import { initApp } from "./modules/initApp.js";
 
-fetch("https://wedev-api.sky.pro/api/v1/Alex-Klim93/comments").then(
-  (response) => {
-    return response.json();
-  }).then((data)=>{
-    console.log(data);
-    updateTasks(data.comments)
-    renderComments()
-  })
+export function showErrorMessage(message) {
+  updateTasks([
+    {
+      author: { name: "" },
+      text: message,
+      isPlainText: true,
+    },
+  ]);
+  renderComments();
+}
 
-//   fetch("https://wedev-api.sky.pro/api/v1/Alex-Klim93/comments",{
-//     method:'POST',
-//     body: JSON.stringify(newComment),
-//   }).then(response => {
-//     return response.json();
-// }).then(data =>{
-//     console.log(data);
-//     updateTasks(data.comments);
-//     renderComments();
-// })
+// Инициализация приложения
+initApp();
