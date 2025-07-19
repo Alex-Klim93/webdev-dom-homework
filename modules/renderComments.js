@@ -1,8 +1,12 @@
 import { comments } from "./comments.js";
 import { toggleLike } from "./toggleLike.js";
-import { exetButton } from "./exetButton.js";
+//import { exetButton } from "./exetButton.js";
+//import { formatDistanceToNow } from "https://unpkg.com/date-fns/formatDistanceToNow.mjs";
+import { format } from " https://cdn.jsdelivr.net/npm/date-fns@3/+esm ";
+import { ru } from " https://cdn.jsdelivr.net/npm/date-fns@3/locale/ru/+esm ";
 
-const commentsList = document.querySelector(".comments");
+export const commentsList = document.querySelector(".comments");
+export const commentOne = document.querySelector(".comment");
 //const nameInput = document.querySelector('.add-form-name')
 const commentInput = document.querySelector(".add-form-text");
 
@@ -10,7 +14,11 @@ export function renderComments() {
   commentsList.innerHTML = ""; // Очищаем список перед отрисовкой
 
   comments.forEach((comment, index) => {
-    // Проверяем, это простое текстовое сообщение или обычный комментарий
+    const timeDay = comment.date
+      ? format(new Date(comment.date), "dd.MM.yyyy HH:mm", {
+          locale: ru,
+        })
+      : "Дата не указана";
     const commentBlock = comment.isPlainText
       ? `<li class="comment" style="color: white; background: none; border: none; padding: 0; list-style: none; margin: 0;">
                   <div class="comment-text" style="color: white; padding: 10px;">
@@ -20,7 +28,7 @@ export function renderComments() {
       : `<li class="comment" data-indexLi="${index}">
                   <div class="comment-header" data-indexLi="${index}">
                       <div>${comment.author.name}</div>
-                      <div>${comment.date}</div>
+                      <div>${timeDay}</div>
                   </div>
                   <div class="comment-body" data-indexLi="${index}">
                       <div class="comment-text" data-indexLi="${index}">

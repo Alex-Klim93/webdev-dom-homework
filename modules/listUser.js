@@ -14,7 +14,7 @@ export async function getUsersList() {
 
     if (!response.ok) {
       throw new Error(
-        `Ошибка при получении списка пользователей: ${response.status}`
+        `Ошибка при получении списка пользователей: ${response.status}`,
       );
     }
 
